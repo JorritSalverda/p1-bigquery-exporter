@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/alecthomas/kingpin"
 	foundation "github.com/estafette/estafette-foundation"
@@ -68,8 +69,18 @@ func main() {
 	}
 	defer usb.Close()
 
+	measurement := BigQueryMeasurement{
+		Readings:   []BigQuerySmartMeterReading{},
+		InsertedAt: time.Now().UTC(),
+	}
+
 	reader := bufio.NewReader(usb)
 	for {
+		if len(measurement.Readings) >= len(config.SupportedReadings) {
+			log.Info().Msgf("Collected %v readings, stop reading for more", len(measurement.Readings))
+			break
+		}
+
 		// read from usb port
 		rawLine, err := reader.ReadBytes('\x0a')
 		if err != nil {
@@ -99,18 +110,22 @@ func main() {
 			valueAsFloat64 = valueAsFloat64 * r.ValueMultiplier
 			log.Info().Msgf("%v: %v%v", r.Name, valueAsFloat64, r.Unit)
 
+			// map to BigQuerySmartMeterReading
+			measurement.Readings = append(measurement.Readings, BigQuerySmartMeterReading{
+				Name:    r.Name,
+				Reading: valueAsFloat64,
+				Unit:    r.Unit,
+			})
+
 			break
 		}
 	}
 
-	// measurements := []BigQueryMeasurement{
-	// 	BigQueryMeasurement{},
-	// }
-
-	// err = bigqueryClient.InsertMeasurements(*bigqueryDataset, *bigqueryTable, measurements)
-	// if err != nil {
-	// 	log.Fatal().Err(err).Msg("Failed inserting measurements into bigquery table")
-	// }
+	err = bigqueryClient.InsertMeasurement(*bigqueryDataset, *bigqueryTable, measurement)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed inserting measurements into bigquery table")
+	}
+	log.Info().Msgf("Stored %v readings, exiting...", len(measurement.Readings))
 }
 
 func initBigqueryTable(bigqueryClient BigQueryClient) {

@@ -15,7 +15,7 @@ type BigQueryClient interface {
 	CreateTable(dataset, table string, typeForSchema interface{}, partitionField string, waitReady bool) error
 	UpdateTableSchema(dataset, table string, typeForSchema interface{}) error
 	DeleteTable(dataset, table string) error
-	InsertMeasurements(dataset, table string, measurements []BigQueryMeasurement) error
+	InsertMeasurement(dataset, table string, measurement BigQueryMeasurement) error
 }
 
 type bigQueryClientImpl struct {
@@ -159,7 +159,7 @@ func (bqc *bigQueryClientImpl) DeleteTable(dataset, table string) error {
 	return nil
 }
 
-func (bqc *bigQueryClientImpl) InsertMeasurements(dataset, table string, measurements []BigQueryMeasurement) error {
+func (bqc *bigQueryClientImpl) InsertMeasurement(dataset, table string, measurement BigQueryMeasurement) error {
 
 	if !bqc.enable {
 		return nil
@@ -169,7 +169,7 @@ func (bqc *bigQueryClientImpl) InsertMeasurements(dataset, table string, measure
 
 	u := tbl.Uploader()
 
-	if err := u.Put(context.Background(), measurements); err != nil {
+	if err := u.Put(context.Background(), measurement); err != nil {
 		return err
 	}
 
