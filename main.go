@@ -49,6 +49,8 @@ func main() {
 		log.Fatal().Err(err).Msgf("Failed loading config from %v", *configPath)
 	}
 
+	log.Info().Interface("supportedReadings", config.SupportedReadings).Msgf("Loaded config from %v", *configPath)
+
 	// init bigquery client
 	bigqueryClient, err := NewBigQueryClient(*bigqueryProjectID, *bigqueryEnable)
 	if err != nil {
@@ -84,17 +86,20 @@ func main() {
 
 			if len(line) < r.ValueStartIndex+r.ValueLength {
 				log.Warn().Msgf("Line with length %v is too short to extract value for reading '%v'", len(line), r.Name)
-				continue
+				break
 			}
 
 			valueAsString := line[r.ValueStartIndex : r.ValueStartIndex+r.ValueLength]
 			valueAsFloat64, err := strconv.ParseFloat(valueAsString, 64)
 			if err != nil {
-				log.Warn().Err(err).Msgf("Failed parsing float")
+				log.Warn().Err(err).Msgf("Failed parsing float '%v' for reading '%v'", valueAsString, r.Name)
+				break
 			}
-			valueAsFloat64 = valueAsFloat64 * r.ValueMultiplier
 
+			valueAsFloat64 = valueAsFloat64 * r.ValueMultiplier
 			log.Info().Msgf("%v: %v%v", r.Name, valueAsFloat64, r.Unit)
+
+			break
 		}
 	}
 

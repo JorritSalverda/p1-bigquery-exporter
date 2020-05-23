@@ -32,6 +32,7 @@ data:
       valueMultiplier: 1000
       valueStartIndex: 10
       valueLength: 10
+
     # 1-0:2.8.1(123456.789*kWh)
     - prefix: 1-0:2.8.1
       name: Teruglevering normaal
@@ -46,14 +47,6 @@ data:
       valueMultiplier: -1000
       valueStartIndex: 10
       valueLength: 10
-
-    # 1-0:1.7.0(01.193*kW)
-    - prefix: 1-0:1.7.0
-      name: Levering vermogen
-      unit: W
-      valueMultiplier: 1000
-      valueStartIndex: 10
-      valueLength: 6
 
     # 1-0:1.7.0(01.193*kW)
     - prefix: 1-0:1.7.0
