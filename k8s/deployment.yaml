@@ -53,7 +53,7 @@ spec:
             configMapKeyRef:
               key: bq-table
               name: p1-bigquery-exporter-configs
-      - name: GOOGLE_APPLICATION_CREDENTIALS
+        - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /secrets/keyfile.json
         resources:
           requests:

@@ -75,10 +75,15 @@ func main() {
 		}
 
 		line := string(rawLine[:])
-		log.Print(line)
+		log.Debug().Msg(line)
 
 		for _, r := range config.SupportedReadings {
 			if !strings.HasPrefix(line, r.Prefix) {
+				continue
+			}
+
+			if len(line) < r.ValueStartIndex+r.ValueLength {
+				log.Warn().Msgf("Line with length %v is too short to extract value for reading '%v'", len(line), r.Name)
 				continue
 			}
 
@@ -89,7 +94,7 @@ func main() {
 			}
 			valueAsFloat64 = valueAsFloat64 * r.ValueMultiplier
 
-			log.Printf("%v - %v %v", r.Name, valueAsFloat64, r.Unit)
+			log.Info().Msgf("%v: %v%v", r.Name, valueAsFloat64, r.Unit)
 		}
 	}
 

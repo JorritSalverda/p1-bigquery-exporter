@@ -21,5 +21,5 @@ curl https://raw.githubusercontent.com/JorritSalverda/p1-bigquery-exporter/maste
 And for deploying (a new version of) the application run
 
 ```bash
-curl https://raw.githubusercontent.com/JorritSalverda/tp-link-hs110-bigquery-exporter/master/k8s/deployment.yaml | P1_DEVICE_PATH='/dev/ttyUSB0' CONTAINER_TAG='0.1.13' envsubst \$P1_DEVICE_PATH,\$CONTAINER_TAG | kubectl apply -f -
+curl https://raw.githubusercontent.com/JorritSalverda/p1-bigquery-exporter/master/k8s/deployment.yaml | P1_DEVICE_PATH='/dev/ttyUSB0' CONTAINER_TAG='0.1.13' envsubst \$P1_DEVICE_PATH,\$CONTAINER_TAG | kubectl apply -f -
 ```

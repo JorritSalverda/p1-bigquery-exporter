@@ -12,7 +12,7 @@ metadata:
     app: p1-bigquery-exporter
 data:
   p1-device-path: ${P1_DEVICE_PATH}
-  bq-enable: ${BQ_ENABLE}
+  bq-enable: '${BQ_ENABLE}'
   bq-project-id: ${BQ_PROJECT_ID}
   bq-dataset: ${BQ_DATASET}
   bq-table: ${BQ_TABLE}
