@@ -20,14 +20,14 @@ data:
     supportedReadings:
     # 1-0:1.8.1(123456.789*kWh)
     - prefix: 1-0:1.8.1
-      name: Levering normaal
+      name: Levering dal
       unit: Wh
       valueMultiplier: 1000
       valueStartIndex: 10
       valueLength: 10
     # 1-0:1.8.2(123456.789*kWh)
     - prefix: 1-0:1.8.2
-      name: Levering dal
+      name: Levering normaal
       unit: Wh
       valueMultiplier: 1000
       valueStartIndex: 10
@@ -35,14 +35,14 @@ data:
 
     # 1-0:2.8.1(123456.789*kWh)
     - prefix: 1-0:2.8.1
-      name: Teruglevering normaal
+      name: Teruglevering dal
       unit: Wh
       valueMultiplier: -1000
       valueStartIndex: 10
       valueLength: 10
     # 1-0:2.8.2(123456.789*kWh)
     - prefix: 1-0:2.8.2
-      name: Teruglevering dal
+      name: Teruglevering normaal
       unit: Wh
       valueMultiplier: -1000
       valueStartIndex: 10
@@ -64,7 +64,7 @@ data:
       valueLength: 6
 
     # 0-1:24.2.1(101209112500W)(12785.123*m3)
-    - prefix: 1-0:2.7.0
+    - prefix: 0-1:24.2.1
       name: Levering gas
       unit: m3
       valueMultiplier: 1
