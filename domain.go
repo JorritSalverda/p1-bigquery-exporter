@@ -18,9 +18,8 @@ type Reading struct {
 }
 
 type BigQueryMeasurement struct {
-	CurrentPowerDrawWatt float64                     `bigquery:"current_power_draw_watt"`
-	Readings             []BigQuerySmartMeterReading `bigquery:"readings"`
-	InsertedAt           time.Time                   `bigquery:"inserted_at"`
+	Readings   []BigQuerySmartMeterReading `bigquery:"readings"`
+	InsertedAt time.Time                   `bigquery:"inserted_at"`
 }
 
 type BigQuerySmartMeterReading struct {
