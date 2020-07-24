@@ -7,7 +7,7 @@ metadata:
     app: p1-bigquery-exporter
 spec:
   schedule: '${SCHEDULE}'
-  concurrencyPolicy: Allow
+  concurrencyPolicy: Forbid
   failedJobsHistoryLimit: 1
   successfulJobsHistoryLimit: 3
   suspend: false  
