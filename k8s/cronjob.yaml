@@ -16,12 +16,13 @@ spec:
       completions: 1
       parallelism: 1
       backoffLimit: 0
+      activeDeadlineSeconds: 240
       template:
         metadata:
           labels:
             app: p1-bigquery-exporter
         spec:
-          restartPolicy: OnFailure
+          restartPolicy: Never
           containers:
           - name: p1-bigquery-exporter
             image: jsalverda/p1-bigquery-exporter:${CONTAINER_TAG}
