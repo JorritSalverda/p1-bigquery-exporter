@@ -8,28 +8,32 @@ Multiple other metering devices can be linked to the smart meter and export thei
 
 This application can be run as a cronjob to export the readings to BigQuery in a regular interval.
 
-# How to run
 
-Run this once for creating the secret with GCP service account keyfile
+## Installation
+
+To install this application using Helm run the following commands: 
 
 ```bash
-curl -s https://raw.githubusercontent.com/JorritSalverda/p1-bigquery-exporter/master/k8s/secret.yaml | GCP_SERVICE_ACCOUNT_KEYFILE='<base64 encoded service account keyfile>' envsubst \$GCP_SERVICE_ACCOUNT_KEYFILE | kubectl apply -f -
+helm repo add jorritsalverda https://helm.jorritsalverda.com
+kubectl create namespace p1-bigquery-exporter
+
+helm upgrade \
+  p1-bigquery-exporter \
+  jorritsalverda/p1-bigquery-exporter \
+  --install \
+  --namespace p1-bigquery-exporter \
+  --set secret.gcpServiceAccountKeyfile='{abc: blabla}' \
+  --wait
 ```
 
-The service account keyfile can include newlines, since it's mounted as a file; so encode it using
+If you later on want to upgrade without specifying all values again you can use
 
 ```bash
-cat keyfile.json | base64
-```
-
-In order to configure the application run
-
-```bash
-curl -s https://raw.githubusercontent.com/JorritSalverda/p1-bigquery-exporter/master/k8s/configmap.yaml | P1_DEVICE_PATH='/dev/ttyUSB0' BQ_ENABLE='true' BQ_PROJECT_ID='gcp-project-id' BQ_DATASET='my-dataset' BQ_TABLE='my-table' envsubst \$P1_DEVICE_PATH,\$BQ_ENABLE,\$BQ_PROJECT_ID,\$BQ_DATASET,\$BQ_TABLE | kubectl apply -f -
-```
-
-And for deploying (a new version of) the application run
-
-```bash
-curl -s https://raw.githubusercontent.com/JorritSalverda/p1-bigquery-exporter/master/k8s/cronjob.yaml | SCHEDULE='*/5 * * * *' P1_DEVICE_PATH='/dev/ttyUSB0' CONTAINER_TAG='0.1.5' envsubst \$SCHEDULE,\$P1_DEVICE_PATH,\$CONTAINER_TAG | kubectl apply -f -
+helm upgrade \
+  p1-bigquery-exporter \
+  jorritsalverda/p1-bigquery-exporter \
+  --install \
+  --namespace p1-bigquery-exporter \
+  --set cronjob.schedule='*/1 * * * *' \
+  --wait
 ```

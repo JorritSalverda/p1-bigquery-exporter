@@ -1,0 +1,16 @@
+{{- if .Values.rbac.enable -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "p1-bigquery-exporter.fullname" . }}
+  labels:
+    {{- include "p1-bigquery-exporter.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "p1-bigquery-exporter.fullname" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "p1-bigquery-exporter.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+{{- end -}}

@@ -1,0 +1,102 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ include "p1-bigquery-exporter.fullname" . }}
+  labels:
+    {{- include "p1-bigquery-exporter.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.cronjob.schedule | quote }}
+  concurrencyPolicy: {{ .Values.cronjob.concurrencyPolicy }}
+  failedJobsHistoryLimit: 1
+  successfulJobsHistoryLimit: 3
+  suspend: false
+  jobTemplate:
+    spec:
+      completions: 1
+      parallelism: 1
+      backoffLimit: 0
+      activeDeadlineSeconds: 240
+      template:
+        metadata:
+          {{- with .Values.podAnnotations }}
+          annotations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}  
+          labels:
+            {{- include "p1-bigquery-exporter.labels" . | nindent 12 }}
+        spec:
+          restartPolicy: Never
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "p1-bigquery-exporter.serviceAccountName" . }}
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          containers:
+          - name: {{ .Chart.Name }}
+            securityContext:
+              {{- toYaml .Values.securityContext | nindent 14 }}
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy }}    
+            env:
+            - name: P1_DEVICE_PATH
+              valueFrom:
+                configMapKeyRef:
+                  key: p1-device-path
+                  name: {{ include "p1-bigquery-exporter.fullname" . }}
+            - name: BQ_ENABLE
+              valueFrom:
+                configMapKeyRef:
+                  key: bq-enable
+                  name: {{ include "p1-bigquery-exporter.fullname" . }}
+            - name: BQ_PROJECT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "p1-bigquery-exporter.fullname" . }}
+                  key: bq-project-id
+            - name: BQ_DATASET
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "p1-bigquery-exporter.fullname" . }}
+                  key: bq-dataset
+            - name: BQ_TABLE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "p1-bigquery-exporter.fullname" . }}
+                  key: bq-table
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /secrets/keyfile.json
+            resources:
+              {{- toYaml .Values.resources | nindent 14 }}
+            volumeMounts:
+            - name: configs
+              mountPath: /configs
+            - name: secrets
+              mountPath: /secrets
+            - name: usb
+              mountPath: {{ .Values.cronjob.usbDevice }}
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          terminationGracePeriodSeconds: 300
+          volumes:
+          - name: configs
+            configMap:
+              name: {{ include "p1-bigquery-exporter.fullname" . }}
+          - name: secrets
+            secret:
+              defaultMode: 420
+              secretName: {{ include "p1-bigquery-exporter.fullname" . }}
+          - name: usb
+            hostPath:
+              path: {{ .Values.cronjob.usbDevice }}

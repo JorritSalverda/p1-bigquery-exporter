@@ -1,21 +1,15 @@
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: p1-bigquery-exporter
----
-apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: p1-bigquery-exporter-configs
-  namespace: p1-bigquery-exporter
+  name: {{ include "p1-bigquery-exporter.fullname" . }}
   labels:
-    app: p1-bigquery-exporter
+    {{- include "p1-bigquery-exporter.labels" . | nindent 4 }}
 data:
-  p1-device-path: ${P1_DEVICE_PATH}
-  bq-enable: '${BQ_ENABLE}'
-  bq-project-id: ${BQ_PROJECT_ID}
-  bq-dataset: ${BQ_DATASET}
-  bq-table: ${BQ_TABLE}
+  p1-device-path: {{ .Values.cronjob.usbDevice | quote }}
+  bq-enable: {{ .Values.config.bqEnable | quote }}
+  bq-project-id: {{ .Values.config.bqProjectID | quote }}
+  bq-dataset: {{ .Values.config.bqDataset | quote }}
+  bq-table: {{ .Values.config.bqTable | quote }}
   config.yaml: |
     supportedReadings:
     # 1-0:1.8.1(123456.789*kWh)
