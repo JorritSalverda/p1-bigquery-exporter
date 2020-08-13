@@ -34,6 +34,7 @@ helm upgrade \
   jorritsalverda/p1-bigquery-exporter \
   --install \
   --namespace p1-bigquery-exporter \
+  --reuse-values \
   --set cronjob.schedule='*/1 * * * *' \
   --wait
 ```
