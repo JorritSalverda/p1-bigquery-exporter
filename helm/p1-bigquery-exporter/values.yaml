@@ -16,6 +16,8 @@ config:
 secret:
   gcpServiceAccountKeyfile: '{}'
 
+logFormat: json
+
 image:
   repository: jsalverda/p1-bigquery-exporter
   pullPolicy: IfNotPresent
