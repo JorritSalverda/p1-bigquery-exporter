@@ -11,56 +11,6 @@ data:
   bq-dataset: {{ .Values.config.bqDataset | quote }}
   bq-table: {{ .Values.config.bqTable | quote }}
   config.yaml: |
-    supportedReadings:
-    # 1-0:1.8.1(123456.789*kWh)
-    - prefix: 1-0:1.8.1
-      name: Levering dal
-      unit: Wh
-      valueMultiplier: 1000
-      valueStartIndex: 10
-      valueLength: 10
-    # 1-0:1.8.2(123456.789*kWh)
-    - prefix: 1-0:1.8.2
-      name: Levering normaal
-      unit: Wh
-      valueMultiplier: 1000
-      valueStartIndex: 10
-      valueLength: 10
-
-    # 1-0:2.8.1(123456.789*kWh)
-    - prefix: 1-0:2.8.1
-      name: Teruglevering dal
-      unit: Wh
-      valueMultiplier: -1000
-      valueStartIndex: 10
-      valueLength: 10
-    # 1-0:2.8.2(123456.789*kWh)
-    - prefix: 1-0:2.8.2
-      name: Teruglevering normaal
-      unit: Wh
-      valueMultiplier: -1000
-      valueStartIndex: 10
-      valueLength: 10
-
-    # 1-0:1.7.0(01.193*kW)
-    - prefix: 1-0:1.7.0
-      name: Levering vermogen
-      unit: W
-      valueMultiplier: 1000
-      valueStartIndex: 10
-      valueLength: 6
-    # 1-0:2.7.0(00.000*kW)
-    - prefix: 1-0:2.7.0
-      name: Teruglevering vermogen
-      unit: W
-      valueMultiplier: -1000
-      valueStartIndex: 10
-      valueLength: 6
-
-    # 0-1:24.2.1(101209112500W)(12785.123*m3)
-    - prefix: 0-1:24.2.1
-      name: Levering gas
-      unit: m3
-      valueMultiplier: 1
-      valueStartIndex: 26
-      valueLength: 9
+    {{- with .Values.config.configYaml }}
+    {{- tpl . $ | nindent 4 }}
+    {{- end }}
