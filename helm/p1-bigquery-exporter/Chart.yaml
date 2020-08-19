@@ -1,6 +1,6 @@
 apiVersion: v2
 name: p1-bigquery-exporter
-description: A Helm chart for Kubernetes
+description: Stores (Dutch) smart meter readings extracted via the P1 port in Google BigQuery
 
 # A chart can be either an 'application' or a 'library' chart.
 #
