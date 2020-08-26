@@ -69,6 +69,8 @@ func main() {
 	}
 	defer usb.Close()
 
+	hasRecordedReading := map[string]bool{}
+
 	measurement := BigQueryMeasurement{
 		Readings:   []BigQuerySmartMeterReading{},
 		InsertedAt: time.Now().UTC(),
@@ -76,7 +78,7 @@ func main() {
 
 	reader := bufio.NewReader(usb)
 	for {
-		if len(measurement.Readings) >= len(config.SupportedReadings) {
+		if len(hasRecordedReading) >= len(config.SupportedReadings) {
 			log.Info().Msgf("Collected %v readings, stop reading for more", len(measurement.Readings))
 			break
 		}
@@ -110,12 +112,17 @@ func main() {
 			valueAsFloat64 = valueAsFloat64 * r.ValueMultiplier
 			log.Info().Msgf("%v: %v%v", r.Name, valueAsFloat64, r.Unit)
 
-			// map to BigQuerySmartMeterReading
-			measurement.Readings = append(measurement.Readings, BigQuerySmartMeterReading{
-				Name:    r.Name,
-				Reading: valueAsFloat64,
-				Unit:    r.Unit,
-			})
+			if _, ok := hasRecordedReading[r.Name]; !ok {
+				// map to BigQuerySmartMeterReading
+				measurement.Readings = append(measurement.Readings, BigQuerySmartMeterReading{
+					Name:    r.Name,
+					Reading: valueAsFloat64,
+					Unit:    r.Unit,
+				})
+				hasRecordedReading[r.Name] = true
+			} else {
+				log.Warn().Msgf("A reading for %v has already been recorded", r.Name)
+			}
 
 			break
 		}
