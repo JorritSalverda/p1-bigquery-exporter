@@ -232,9 +232,6 @@ func readLastMeasurementFromMeasurementFile() (measurementMap map[string]float64
 
 func writeMeasurementToConfigmap(kubeClientset *kubernetes.Clientset, measurement BigQueryMeasurement) {
 
-	measurementFilePath = kingpin.Flag("state-file-path", "Path to file with state.").Default("/configs/last-measurement.json").OverrideDefaultFromEnvar("MEASUREMENT_FILE_PATH").String()
-	measurementFileConfigMapName = kingpin.Flag("state-file-configmap-name", "Name of the configmap with state file.").Default("p1-bigquery-exporter").OverrideDefaultFromEnvar("MEASUREMENT_FILE_CONFIG_MAP_NAME").String()
-
 	// retrieve configmap
 	configMap, err := kubeClientset.CoreV1().ConfigMaps(getCurrentNamespace()).Get(*measurementFileConfigMapName, metav1.GetOptions{})
 	if err != nil {
