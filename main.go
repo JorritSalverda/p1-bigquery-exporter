@@ -112,6 +112,12 @@ func main() {
 			valueAsFloat64 = valueAsFloat64 * r.ValueMultiplier
 			log.Info().Msgf("%v: %v%v", r.Name, valueAsFloat64, r.Unit)
 
+			// likely max output 50 years times 10,000 kWh * 1000 W in a kW
+			if r.Unit == "Wh" && valueAsFloat64 > 50*10000*1000 {
+				log.Warn().Err(err).Msgf("Value '%v' for reading '%v' is out of range", valueAsFloat64, r.Name)
+				break
+			}
+
 			if _, ok := hasRecordedReading[r.Name]; !ok {
 				// map to BigQuerySmartMeterReading
 				measurement.Readings = append(measurement.Readings, BigQuerySmartMeterReading{
