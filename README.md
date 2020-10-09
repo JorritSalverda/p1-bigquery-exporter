@@ -1,3 +1,7 @@
+# Note
+
+This application is superseded by [jarvis-p1-exporter](https://github.com/JorritSalverda/jarvis-p1-exporter).
+
 # What does this do?
 
 In the Netherlands so called 'smart' electricity meters are nothing more than meters that can export their readings in a digital format, called P1.

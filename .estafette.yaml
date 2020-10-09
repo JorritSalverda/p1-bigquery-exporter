@@ -1,3 +1,5 @@
+archived: true
+
 labels:
   app-group: jarvis
   language: golang
